@@ -4,43 +4,58 @@ import bcrypt from "bcryptjs";
 const prisma = new PrismaClient();
 
 async function seed() {
-  const email = "rachel@remix.run";
-
-  // cleanup the existing database
-  await prisma.user.delete({ where: { email } }).catch(() => {
-    // no worries if it doesn't exist yet
-  });
-
-  const hashedPassword = await bcrypt.hash("racheliscool", 10);
-
-  const user = await prisma.user.create({
-    data: {
-      email,
-      password: {
-        create: {
-          hash: hashedPassword,
-        },
-      },
-    },
-  });
-
-  await prisma.note.create({
-    data: {
-      title: "My first note",
-      body: "Hello, world!",
-      userId: user.id,
-    },
-  });
-
-  await prisma.note.create({
-    data: {
-      title: "My second note",
-      body: "Hello, world!",
-      userId: user.id,
-    },
-  });
+  const user = await addDefaultUser();
+  await addDefaulNotes(user);
+  await addDefaultPosts();
 
   console.log(`Database has been seeded. 🌱`);
+}
+
+async function addDefaultUser() {
+  const email = "joeldigbeu@arolitec.com";
+  const password = "Azertyuiop1@";
+
+  const [user] = await prisma.user.findMany({ where: { email } });
+
+  if (user) return;
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  return await prisma.user.create({
+    data: {
+      email,
+      password: hashedPassword,
+    },
+  });
+}
+
+async function addDefaultPosts() {
+  return prisma.post.createMany({
+    data: [
+      { slug: "post-1", title: "Post 1" },
+      { slug: "post-2", title: "Post 2" },
+      { slug: "post-3", title: "Post 3" },
+      { slug: "post-4", title: "Post 4" },
+      { slug: "post-5", title: "Post 5" },
+    ],
+  });
+}
+
+async function addDefaulNotes(user: any) {
+  return prisma.note.createMany({
+    data: [
+      {
+        title: "My first note",
+        body: "Hello, world!",
+        userId: user.id,
+      },
+      {
+        title: "My second note",
+        body: "Hello, world!",
+        userId: user.id,
+      },
+    ],
+  });
 }
 
 seed()

@@ -14,19 +14,10 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  password Password?
+  password String
   notes    Note[]
 
   @@map("users")
-}
-
-model Password {
-  hash String
-
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  userId String @unique
-
-  @@map("passwords")
 }
 
 model Note {
@@ -47,7 +38,7 @@ model Note {
 model Post {
   slug      String      @id
   title     String
-  markdown  String
+  markdown  String?
 
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt
