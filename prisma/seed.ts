@@ -17,7 +17,7 @@ async function addDefaultUser() {
 
   const [user] = await prisma.user.findMany({ where: { email } });
 
-  if (user) return;
+  if (user) return user;
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -30,15 +30,19 @@ async function addDefaultUser() {
 }
 
 async function addDefaultPosts() {
-  return prisma.post.createMany({
-    data: [
-      { slug: "post-1", title: "Post 1" },
-      { slug: "post-2", title: "Post 2" },
-      { slug: "post-3", title: "Post 3" },
-      { slug: "post-4", title: "Post 4" },
-      { slug: "post-5", title: "Post 5" },
-    ],
-  });
+  const posts = [
+    { slug: "post-1", title: "Post 1" },
+    { slug: "post-2", title: "Post 2" },
+    { slug: "post-3", title: "Post 3" },
+  ];
+
+  for (const post of posts) {
+    prisma.post.upsert({
+      where: { slug: post.slug },
+      update: post,
+      create: post,
+    });
+  }
 }
 
 async function addDefaulNotes(user: any) {
