@@ -8,8 +8,6 @@ import { createPost } from "~/models/post.server";
 const inputClassName = `w-full rounded border border-gray-500 px-2 py-1 text-lg`;
 
 export const action = async ({ request }: ActionArgs) => {
-  await new Promise((res) => setTimeout(res, 1000));
-
   const formData = await request.formData();
 
   const title = formData.get("title");
@@ -46,20 +44,20 @@ export default function NewPost() {
     <Form method="post">
       <p>
         <label>
-          Post Title:{" "}
-          {errors?.title ? (
-            <em className="text-red-600">{errors.title}</em>
-          ) : null}
-          <input type="text" name="title" className={inputClassName} />
-        </label>
-      </p>
-      <p>
-        <label>
           Post Slug:{" "}
           {errors?.slug ? (
             <em className="text-red-600">{errors.slug}</em>
           ) : null}
           <input type="text" name="slug" className={inputClassName} />
+        </label>
+      </p>
+      <p>
+        <label>
+          Post Title:{" "}
+          {errors?.title ? (
+            <em className="text-red-600">{errors.title}</em>
+          ) : null}
+          <input type="text" name="title" className={inputClassName} />
         </label>
       </p>
       <p>

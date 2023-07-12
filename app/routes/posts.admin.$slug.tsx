@@ -1,7 +1,7 @@
-import type { LoaderArgs } from "@remix-run/node";
-import { json } from "@remix-run/node";
+import type { ActionArgs, LoaderArgs } from "@remix-run/node";
+import { json, redirect } from "@remix-run/node";
 import { Form, useLoaderData } from "@remix-run/react";
-import { getPost } from "~/models/post.server";
+import { updatePost, getPost } from "~/models/post.server";
 import invariant from "tiny-invariant";
 
 const inputClassName = `w-full rounded border border-gray-500 px-2 py-1 text-lg`;
@@ -15,22 +15,38 @@ export const loader = async ({ params }: LoaderArgs) => {
   return json({ post });
 };
 
+export const action = async ({ request }: ActionArgs) => {
+  const formData = await request.formData();
+
+  const title = formData.get("title");
+  const slug = formData.get("slug");
+  const markdown = formData.get("markdown");
+
+  const errors = {
+    title: title ? null : "Title is required",
+    slug: slug ? null : "Slug is required",
+    markdown: markdown ? null : "Markdown is required",
+  };
+
+  const hasErrors = Object.values(errors).some((errorMessage) => errorMessage);
+  if (hasErrors) {
+    return json(errors);
+  }
+
+  invariant(typeof title === "string", "title must be a string");
+  invariant(typeof slug === "string", "slug must be a string");
+  invariant(typeof markdown === "string", "markdown must be a string");
+
+  await updatePost({ title, slug, markdown });
+
+  return redirect("/posts/admin");
+};
+
 export default function UpdatePost() {
   const { post } = useLoaderData<typeof loader>();
 
   return (
-    <Form method="post">
-      <p>
-        <label>
-          Post Title:{" "}
-          <input
-            type="text"
-            name="title"
-            className={inputClassName}
-            value={post.title}
-          />
-        </label>
-      </p>
+    <Form method="put">
       <p>
         <label>
           Post Slug:{" "}
@@ -38,7 +54,19 @@ export default function UpdatePost() {
             type="text"
             name="slug"
             className={inputClassName}
-            value={post.slug}
+            defaultValue={post.slug}
+            disabled
+          />
+        </label>
+      </p>
+      <p>
+        <label>
+          Post Title:{" "}
+          <input
+            type="text"
+            name="title"
+            className={inputClassName}
+            defaultValue={post.title}
           />
         </label>
       </p>
@@ -50,7 +78,7 @@ export default function UpdatePost() {
           rows={15}
           name="markdown"
           className={`${inputClassName} font-mono`}
-          value={post.markdown}
+          defaultValue={post.markdown}
         />
       </p>
       <p className="text-right">
