@@ -10,11 +10,11 @@ export default function Posts() {
   const { posts } = useLoaderData<typeof loader>();
 
   return (
-    <main>
+    <div className="mx-auto max-w-5xl">
+      <h1 className="my-6 mb-2 border-b-2 text-center text-3xl">All posts</h1>
       <Link to="admin" className="text-red-600 underline">
         Admin
       </Link>
-      <h1>Posts</h1>
       <ul>
         {posts.map((post) => (
           <li key={post.slug}>
@@ -24,6 +24,6 @@ export default function Posts() {
           </li>
         ))}
       </ul>
-    </main>
+    </div>
   );
 }
