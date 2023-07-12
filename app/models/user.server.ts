@@ -28,10 +28,7 @@ export async function deleteUserByEmail(email: User["email"]) {
   return prisma.user.delete({ where: { email } });
 }
 
-export async function verifyLogin(
-  email: User["email"],
-  password: Password["hash"]
-) {
+export async function verifyLogin(email: User["email"], password: string) {
   const user = await prisma.user.findUnique({
     where: { email },
   });

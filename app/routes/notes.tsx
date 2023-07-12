@@ -17,8 +17,8 @@ export default function NotesPage() {
   const user = useUser();
 
   return (
-    <div className="flex h-full min-h-screen flex-col">
-      <header className="flex items-center justify-between bg-slate-800 p-4 text-white">
+    <div className="flex h-full min-h-screen flex-col overflow-hidden">
+      <header className="flex items-center justify-between bg-slate-800 text-white">
         <h1 className="text-3xl font-bold">
           <Link to=".">Notes</Link>
         </h1>
@@ -34,7 +34,7 @@ export default function NotesPage() {
       </header>
 
       <main className="flex h-full bg-white">
-        <div className="h-full w-80 border-r bg-gray-50">
+        <div className="h-100 w-80 overflow-y-auto border-r  bg-gray-50 pb-12">
           <Link to="new" className="block p-4 text-xl text-blue-500">
             + New Note
           </Link>
