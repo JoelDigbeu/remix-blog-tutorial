@@ -1,4 +1,4 @@
-import type { LoaderArgs } from "@remix-run/node";
+import type { LoaderArgs, LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
 import { getPost } from "~/models/post.server";
@@ -10,7 +10,7 @@ type LoaderData = {
   title: string;
 };
 
-export const loader = async ({ params }: LoaderArgs) => {
+export const loader: LoaderFunction = async ({ params }: LoaderArgs) => {
   invariant(params.slug, `params.slug is required`);
 
   const post = await getPost(params.slug);
